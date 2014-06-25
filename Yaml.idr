@@ -118,6 +118,11 @@ mutual
     value <- yamlValue
     pure (key, value)
 
+  -- I can't use `sepBy` (char '\n') because of space in yamlValue
+  -- Yes, \n is also space
+  -- > isSpace '\n'
+  -- True : Bool
+  -- TODO: change yamlValue, invent new space
   yamlObject : Parser (SortedMap String YamlValue)
   yamlObject = map fromList $ keyValuePair `sepBy` (pure '\n') -- I can use many aswell instead of `sepBy` (pure '\n')
 
