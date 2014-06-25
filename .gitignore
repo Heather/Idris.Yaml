@@ -1,0 +1,12 @@
+dist
+*.ibc
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.dylib
+*.swp
+*~
+*.sublime-project
+*.sublime-workspace
