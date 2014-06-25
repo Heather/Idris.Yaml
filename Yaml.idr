@@ -123,6 +123,7 @@ mutual
   -- > isSpace '\n'
   -- True : Bool
   -- TODO: change yamlValue, invent new space
+  -- yamlSpace = skip (many $ satisfy (\c=>c!='\n'&&isSpace)) <?> "whitespace"
   yamlObject : Parser (SortedMap String YamlValue)
   yamlObject = map fromList $ keyValuePair `sepBy` (pure '\n') -- I can use many aswell instead of `sepBy` (pure '\n')
 
