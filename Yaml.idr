@@ -119,7 +119,7 @@ mutual
     pure (key, value)
 
   yamlObject : Parser (SortedMap String YamlValue)
-  yamlObject = map fromList $ keyValuePair `sepBy` (pure '\n')
+  yamlObject = map fromList $ keyValuePair `sepBy` (pure '\n') -- I can use many aswell instead of `sepBy` (pure '\n')
 
   yamlValue' : Parser YamlValue
   yamlValue' =  (map YamlString yamlString)
