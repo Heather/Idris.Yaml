@@ -107,9 +107,13 @@ parseWord' : Parser (List Char)
 parseWord' = (char ' ' $!> pure Prelude.List.Nil) <|> do
   c <- satisfy (/= ' '); map (c ::) parseWord'
 
+||| A parser that skips whitespace without jumping over lines
+yamlSpace : Monad m => ParserT m String ()
+yamlSpace = skip (many $ satisfy (\c => c /= '\n' && isSpace c)) <?> "whitespace"
+
 mutual
   yamlArray : Parser (List YamlValue)
-  yamlArray = char '-' $!> (yamlValue `sepBy` (char '-'))
+  yamlArray = char '-' $!> (yamlArrayValue `sepBy` (char '-'))
 
   keyValuePair : Parser (String, YamlValue)
   keyValuePair = do
@@ -118,14 +122,8 @@ mutual
     value <- yamlValue
     pure (key, value)
 
-  -- I can't use `sepBy` (char '\n') because of space in yamlValue
-  -- Yes, \n is also space
-  -- > isSpace '\n'
-  -- True : Bool
-  -- TODO: change yamlValue, invent new space
-  -- yamlSpace = skip (many $ satisfy (\c=>c!='\n'&&isSpace)) <?> "whitespace"
   yamlObject : Parser (SortedMap String YamlValue)
-  yamlObject = map fromList $ keyValuePair `sepBy` (pure '\n') -- I can use many aswell instead of `sepBy` (pure '\n')
+  yamlObject = map fromList $ keyValuePair `sepBy` (char '\n')
 
   yamlValue' : Parser YamlValue
   yamlValue' =  (map YamlString yamlString)
@@ -135,8 +133,11 @@ mutual
             <|>| map YamlArray  yamlArray
             <|>| map YamlObject yamlObject
 
+  yamlArrayValue : Parser YamlValue
+  yamlArrayValue = space $> yamlValue' <$ space
+
   yamlValue : Parser YamlValue
-  yamlValue = space $> yamlValue' <$ space
+  yamlValue = yamlSpace $> yamlValue' <$ yamlSpace
 
 yamlToplevelValue : Parser YamlValue
 yamlToplevelValue = (map YamlArray yamlArray) <|> (map YamlObject yamlObject)
