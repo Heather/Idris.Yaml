@@ -109,7 +109,7 @@ parseWord' = (char ' ' $!> pure Prelude.List.Nil) <|> do
 
 ||| A parser that skips whitespace without jumping over lines
 yamlSpace : Monad m => ParserT m String ()
-yamlSpace = skip (many $ satisfy (\c => c /= '\n' && isSpace c)) <?> "whitespace"
+yamlSpace = skip (many $ satisfy (\c => c /= '\n' && isSpace c)) <?> "yamlSpace"
 
 mutual
   yamlArray : Parser (List YamlValue)
@@ -124,6 +124,10 @@ mutual
 
   yamlObject : Parser (SortedMap String YamlValue)
   yamlObject = map fromList $ keyValuePair `sepBy` (char '\n')
+  
+  -- TODO check id indent is bigger than in array start
+  yamlObjectA : Parser (SortedMap String YamlValue)
+  yamlObjectA = map fromList $ keyValuePair `sepBy` (string "\n ")
 
   yamlValue' : Parser YamlValue
   yamlValue' =  (map YamlString yamlString)
@@ -132,9 +136,17 @@ mutual
             <|> (pure YamlNull <$ yamlNull)
             <|>| map YamlArray  yamlArray
             <|>| map YamlObject yamlObject
+            
+  yamlValueA' : Parser YamlValue
+  yamlValueA' =  (map YamlString yamlString)
+             <|> (map YamlNumber yamlNumber)
+             <|> (map YamlBool   yamlBool)
+             <|> (pure YamlNull <$ yamlNull)
+             <|>| map YamlArray  yamlArray
+             <|>| map YamlObject yamlObjectA
 
   yamlArrayValue : Parser YamlValue
-  yamlArrayValue = space $> yamlValue' <$ space
+  yamlArrayValue = space $> yamlValueA' <$ space
 
   yamlValue : Parser YamlValue
   yamlValue = yamlSpace $> yamlValue' <$ yamlSpace
