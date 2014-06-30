@@ -127,7 +127,7 @@ mutual
   
   -- TODO check id indent is bigger than in array start
   yamlObjectA : Parser (SortedMap String YamlValue)
-  yamlObjectA = map fromList $ keyValuePair `sepBy` (string "\n ")
+  yamlObjectA = map fromList $ keyValuePair `sepBy` (char ' ')
 
   yamlValue' : Parser YamlValue
   yamlValue' =  (map YamlString yamlString)
