@@ -16,7 +16,7 @@ data YamlValue = YamlString String
                | YamlArray (List YamlValue) -- TODO: YamlObject
 
 instance Show YamlValue where
-  show (YamlString s)   = show s
+  show (YamlString s)   = s
   show (YamlNumber x)   = show x
   show (YamlBool True ) = "true"
   show (YamlBool False) = "false"
@@ -127,7 +127,7 @@ mutual
   
   -- TODO check id indent is bigger than in array start
   yamlObjectA : Parser (SortedMap String YamlValue)
-  yamlObjectA = map fromList $ keyValuePair `sepBy` (char ' ')
+  yamlObjectA = map fromList $ keyValuePair `sepBy` (char '\n')
 
   yamlValue' : Parser YamlValue
   yamlValue' =  (map YamlString yamlString)
