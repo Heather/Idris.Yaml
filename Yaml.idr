@@ -16,7 +16,7 @@ data YamlValue = YamlString String
                | YamlArray (List YamlValue) -- TODO: YamlObject
 
 instance Show YamlValue where
-  show (YamlString s)   = s
+  show (YamlString s)   = show s
   show (YamlNumber x)   = show x
   show (YamlBool True ) = "true"
   show (YamlBool False) = "false"
