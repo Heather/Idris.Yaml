@@ -29,7 +29,7 @@ instance Show YamlValue where
       intercalate sep [x] = x
       intercalate sep (x :: xs) = x ++ sep ++ intercalate sep xs
 
-      fmtItem (k, v) = show k ++ ": " ++ show v
+      fmtItem (k, v) = k ++ ": " ++ show v
   show (YamlArray  xs)  = show xs
 
 hex : Parser Int
