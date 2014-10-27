@@ -1,4 +1,4 @@
 package Yaml
 
 modules = Yaml
-opts = "-p lightyear  --no-partial-eval" 
+opts = "-p lightyear" 
