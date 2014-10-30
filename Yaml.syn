@@ -1,0 +1,5 @@
+name : "Yaml"
+version : 0
+description : "Yaml Idris Library"
+bdeps : "lightyear"
+rdeps :
