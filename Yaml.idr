@@ -4,6 +4,8 @@ import Lightyear.Core
 import Lightyear.Combinators
 import Lightyear.Strings
 
+import Control.Monad.Identity
+
 import Data.SortedMap
 
 %access public
