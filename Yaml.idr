@@ -104,7 +104,6 @@ yamlBool  =  (char 't' >! string "rue"  $> return True)
 yamlNull : Parser ()
 yamlNull = (char 'n' >! string "ull" >! return ()) <?> "Yaml Null"
 
-
 parseWord' : Parser (List Char)
 parseWord' = (char ' ' $!> pure Prelude.List.Nil) <|> do
   c <- satisfy (/= ' '); map (c ::) parseWord'
