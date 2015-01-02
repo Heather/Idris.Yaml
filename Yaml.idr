@@ -18,50 +18,49 @@ data YamlValue = YamlString String
                | YamlArray (List YamlValue) -- TODO: YamlObject
 
 instance Show YamlValue where
-  show (YamlString s)   = show s
-  show (YamlNumber x)   = show x
-  show (YamlBool True ) = "true"
-  show (YamlBool False) = "false"
-  show  YamlNull        = "null"
-  show (YamlObject xs)  =
+    show (YamlString s)   = show s
+    show (YamlNumber x)   = show x
+    show (YamlBool True ) = "true"
+    show (YamlBool False) = "false"
+    show  YamlNull        = "null"
+    show (YamlObject xs)  =
       "{" ++ intercalate ", " (map fmtItem $ SortedMap.toList xs) ++ "}"
-    where
+     where
       intercalate : String -> List String -> String
       intercalate sep [] = ""
       intercalate sep [x] = x
       intercalate sep (x :: xs) = x ++ sep ++ intercalate sep xs
 
       fmtItem (k, v) = k ++ ": " ++ show v
-  show (YamlArray  xs)  = show xs
+    show (YamlArray  xs)  = show xs
 
 hex : Parser Int
 hex = do
-  c <- map (ord . toUpper) $ satisfy isHexDigit
-  pure $ if c >= ord '0' && c <= ord '9' then c - ord '0'
-                                         else 10 + c - ord 'A'
+    c <- map (ord . toUpper) $ satisfy isHexDigit
+    pure $ if c >= ord '0' && c <= ord '9' then c - ord '0'
+                                           else 10 + c - ord 'A'
 
 hexQuad : Parser Int
-hexQuad = do
-  a <- hex
-  b <- hex
-  c <- hex
-  d <- hex
-  pure $ a * 4096 + b * 256 + c * 16 + d
+hexQuad = do a <- hex
+             b <- hex
+             c <- hex
+             d <- hex
+             pure $ a * 4096 + b * 256 + c * 16 + d
 
 specialChar : Parser Char
 specialChar = do
-  c <- satisfy (const True)
-  case c of
-    '"'  => pure '"'
-    '\\' => pure '\\'
-    '/'  => pure '/'
-    'b'  => pure '\b'
-    'f'  => pure '\f'
-    'n'  => pure '\n'
-    'r'  => pure '\r'
-    't'  => pure '\t'
-    'u'  => map chr hexQuad
-    _    => satisfy (const False) <?> "expected special char"
+    c <- satisfy (const True)
+    case c of
+        '"'  => pure '"'
+        '\\' => pure '\\'
+        '/'  => pure '/'
+        'b'  => pure '\b'
+        'f'  => pure '\f'
+        'n'  => pure '\n'
+        'r'  => pure '\r'
+        't'  => pure '\t'
+        'u'  => map chr hexQuad
+        _    => satisfy (const False) <?> "expected special char"
 
 yamlString' : Parser (List Char)
 yamlString' = (char '"' $!> pure Prelude.List.Nil) <|> do
@@ -104,53 +103,47 @@ yamlBool  =  (char 't' >! string "rue"  $> return True)
 yamlNull : Parser ()
 yamlNull = (char 'n' >! string "ull" >! return ()) <?> "Yaml Null"
 
-parseWord' : Parser (List Char)
-parseWord' = (char ' ' $!> pure Prelude.List.Nil) <|> do
-  c <- satisfy (/= ' '); map (c ::) parseWord'
-
 ||| A parser that skips whitespace without jumping over lines
 yamlSpace : Monad m => ParserT m String ()
 yamlSpace = skip (many $ satisfy (\c => c /= '\n' && isSpace c)) <?> "yamlSpace"
 
 mutual
-  yamlArray : Parser (List YamlValue)
-  yamlArray = char '-' $!> (yamlArrayValue `sepBy` (char '-'))
+    yamlArray : Parser (List YamlValue)
+    yamlArray = char '-' $!> (yamlArrayValue `sepBy` (char '-'))
 
-  keyValuePair : Parser (String, YamlValue)
-  keyValuePair = do
-    key <- space $> map pack parseWord' <$ space
-    char ':'
-    value <- yamlValue
-    pure (key, value)
+    keyValuePair : Parser (String, YamlValue)
+    keyValuePair = do key <- map pack (many (satisfy $ not . isSpace)) <$ space
+                      val <- char ':' $> yamlValue
+                      pure (key, val)
 
-  yamlObject : Parser (SortedMap String YamlValue)
-  yamlObject = map fromList $ keyValuePair `sepBy` (char '\n')
-  
-  -- TODO check id indent is bigger than in array start
-  yamlObjectA : Parser (SortedMap String YamlValue)
-  yamlObjectA = map fromList $ keyValuePair `sepBy` (char '\n')
+    yamlObject : Parser (SortedMap String YamlValue)
+    yamlObject = map fromList $ keyValuePair `sepBy` (char '\n')
 
-  yamlValue' : Parser YamlValue
-  yamlValue' =  (map YamlString yamlString)
+    -- TODO check id indent is bigger than in array start
+    yamlObjectA : Parser (SortedMap String YamlValue)
+    yamlObjectA = map fromList $ keyValuePair `sepBy` (char '\n')
+
+    yamlValue' : Parser YamlValue
+    yamlValue' =  (map YamlString yamlString)
             <|> (map YamlNumber yamlNumber)
             <|> (map YamlBool   yamlBool)
             <|> (pure YamlNull <$ yamlNull)
             <|>| map YamlArray  yamlArray
             <|>| map YamlObject yamlObject
             
-  yamlValueA' : Parser YamlValue
-  yamlValueA' =  (map YamlString yamlString)
+    yamlValueA' : Parser YamlValue
+    yamlValueA' =  (map YamlString yamlString)
              <|> (map YamlNumber yamlNumber)
              <|> (map YamlBool   yamlBool)
              <|> (pure YamlNull <$ yamlNull)
              <|>| map YamlArray  yamlArray
              <|>| map YamlObject yamlObjectA
 
-  yamlArrayValue : Parser YamlValue
-  yamlArrayValue = space $> yamlValueA' <$ space
+    yamlArrayValue : Parser YamlValue
+    yamlArrayValue = space $> yamlValueA' <$ space
 
-  yamlValue : Parser YamlValue
-  yamlValue = yamlSpace $> yamlValue' <$ yamlSpace
+    yamlValue : Parser YamlValue
+    yamlValue = yamlSpace $> yamlValue' <$ yamlSpace
 
 yamlToplevelValue : Parser YamlValue
 yamlToplevelValue = (map YamlArray yamlArray) <|> (map YamlObject yamlObject)
