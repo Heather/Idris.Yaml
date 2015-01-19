@@ -1,0 +1,7 @@
+name : "Synthia"
+version : 0
+description : "Idris Package Manager"
+bdeps : - "lighyear"
+        - "eternal"
+        - "yaml"
+rdeps :
