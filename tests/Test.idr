@@ -21,7 +21,6 @@ procs file = case parse yamlToplevelValue config of
                       Right v  => putStrLn $ show v
   where config = concat file
 
-{- GET SYNTHIA CONFIG AND PROCESS -}
 test : String -> FileIO () ()
 test f = case !(open f Read) of
                 True => do procs !readFile
