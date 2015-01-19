@@ -30,3 +30,4 @@ test f = case !(open f Read) of
 main : IO ()
 main = do
   run $ test "test1.yml"
+  run $ test "test2.yml"

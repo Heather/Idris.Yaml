@@ -15,7 +15,7 @@ echo "compiling yaml tests..."
 idris Test.idr -p lightyear -p yaml -p effects -o test || die "* could not compile tests *"
 
 echo "compiled OK, running yaml tests..."
-timeout 5s ./test > output || die "* test failed or timed out *"
+./test > output || die "* test failed or timed out *"
 
 if diff output expected; then
 	echo "### everything PASS ###"

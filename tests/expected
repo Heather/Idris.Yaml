@@ -1,1 +1,2 @@
 {bdeps: ["lighyear", "eternal", "yaml"], description: "Idris Package Manager", name: "Synthia", version: 0}
+{hello: "World"}
