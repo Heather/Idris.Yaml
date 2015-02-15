@@ -1,6 +1,9 @@
 Idris.Yaml
 ----------
 
+First check out idris-config https://github.com/jfdm/idris-config
+which seems like mainteined more actively
+
 code:
 
 ```haskell
