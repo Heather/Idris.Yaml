@@ -44,6 +44,6 @@ out:
 {"bdeps": ["lighyear", "eternal", "yaml"], "description": "Idris Package Manager", "name": "Synthia", "rdeps": {}, "version": 0}
 ```
 
-<h1>warning</h1>
+<b>warning</b>
 
 it's not well tested and maybe needs additional work
