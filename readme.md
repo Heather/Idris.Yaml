@@ -1,9 +1,6 @@
 Idris.Yaml
 ----------
 
-First check out idris-config https://github.com/jfdm/idris-config
-which seems like mainteined more actively
-
 ``` idris
 test : String -> IO ()
 test s = case parse yamlToplevelValue s of
@@ -26,7 +23,7 @@ main = System.getArgs >>= \args => do
     run $ compile "Synthia.syn"
 ```
 
-<img align="right" src="http://fc02.deviantart.net/fs70/f/2012/031/3/6/yun_by_thamychan-d4o7bqo.png"/>
+<img align="left" src="http://fc02.deviantart.net/fs70/f/2012/031/3/6/yun_by_thamychan-d4o7bqo.png"/>
 
 ``` yaml
 name : "Synthia"
@@ -43,7 +40,3 @@ out:
 ``` shell
 {"bdeps": ["lighyear", "eternal", "yaml"], "description": "Idris Package Manager", "name": "Synthia", "rdeps": {}, "version": 0}
 ```
-
-<b>warning</b>
-
-it's not well tested and maybe needs additional work
