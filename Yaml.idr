@@ -63,13 +63,13 @@ specialChar = do
         _    => satisfy (const False) <?> "expected special char"
 
 yamlString' : Parser (List Char)
-yamlString' = (char '"' $!> pure Prelude.List.Nil) <|> do
+yamlString' = (char '"' *!> pure Prelude.List.Nil) <|> do
   c <- satisfy (/= '"')
-  if (c == '\\') then map (::) specialChar <$> yamlString'
+  if (c == '\\') then map (::) specialChar <*> yamlString'
                  else map (c ::) yamlString'
 
 yamlString : Parser String
-yamlString = char '"' $> map pack yamlString' <?> "Yaml string"
+yamlString = char '"' *> map pack yamlString' <?> "Yaml string"
 
 -- inspired by Haskell's Data.Scientific module
 record Scientific : Type where
@@ -97,8 +97,8 @@ yamlNumber : Parser Float
 yamlNumber = map scientificToFloat parseScientific
 
 yamlBool : Parser Bool
-yamlBool  =  (char 't' >! string "rue"  $> return True)
-         <|> (char 'f' >! string "alse" $> return False) <?> "Yaml Bool"
+yamlBool  =  (char 't' >! string "rue"  *> return True)
+         <|> (char 'f' >! string "alse" *> return False) <?> "Yaml Bool"
 
 yamlNull : Parser ()
 yamlNull = (char 'n' >! string "ull" >! return ()) <?> "Yaml Null"
@@ -109,11 +109,11 @@ yamlSpace = skip (many $ satisfy (\c => c /= '\n' && isSpace c)) <?> "yamlSpace"
 
 mutual
     yamlArray : Parser (List YamlValue)
-    yamlArray = char '-' $!> (yamlArrayValue `sepBy` (char '-'))
+    yamlArray = char '-' *!> (yamlArrayValue `sepBy` (char '-'))
 
     keyValuePair : Parser (String, YamlValue)
-    keyValuePair = do key <- map pack (many (satisfy $ not . isSpace)) <$ space
-                      val <- char ':' $> yamlValue
+    keyValuePair = do key <- map pack (many (satisfy $ not . isSpace)) <* space
+                      val <- char ':' *> yamlValue
                       pure (key, val)
 
     yamlObject : Parser (SortedMap String YamlValue)
@@ -127,7 +127,7 @@ mutual
     yamlValue' =  (map YamlString yamlString)
             <|> (map YamlNumber yamlNumber)
             <|> (map YamlBool   yamlBool)
-            <|> (pure YamlNull <$ yamlNull)
+            <|> (pure YamlNull <* yamlNull)
             <|>| map YamlArray  yamlArray
             <|>| map YamlObject yamlObject
             
@@ -135,15 +135,15 @@ mutual
     yamlValueA' =  (map YamlString yamlString)
              <|> (map YamlNumber yamlNumber)
              <|> (map YamlBool   yamlBool)
-             <|> (pure YamlNull <$ yamlNull)
+             <|> (pure YamlNull <* yamlNull)
              <|>| map YamlArray  yamlArray
              <|>| map YamlObject yamlObjectA
 
     yamlArrayValue : Parser YamlValue
-    yamlArrayValue = space $> yamlValueA' <$ space
+    yamlArrayValue = space *> yamlValueA' <* space
 
     yamlValue : Parser YamlValue
-    yamlValue = yamlSpace $> yamlValue' <$ yamlSpace
+    yamlValue = yamlSpace *> yamlValue' <* yamlSpace
 
 yamlToplevelValue : Parser YamlValue
 yamlToplevelValue = (map YamlArray yamlArray) <|> (map YamlObject yamlObject)
