@@ -2,25 +2,26 @@ Idris.Yaml
 ----------
 
 ``` idris
-test : String -> IO ()
-test s = case parse yamlToplevelValue s of
-  Left err => putStrLn $ "error: " ++ err
-  Right v  => print v
-  
-quest : (List String) -> { [STDIO] } Eff IO ()
-quest file = do
-    let config = concat file
-    test config
+FileIO : Type -> Type -> Type
+FileIO st t = { [FILE_IO st, STDIO] } Eff t 
 
-compile : String -> FileIO () ()
-compile f = do case !(open f Read) of
-                True => do quest !readFile
+readFile : FileIO (OpenFile Read) (List String)
+readFile = readAcc [] where
+  readAcc : List String -> FileIO (OpenFile Read) (List String)
+  readAcc acc = if (not !eof) then readAcc $ !readLine :: acc
+                              else return  $ reverse acc
+
+procs : (List String) -> { [STDIO] } Eff ()
+procs file = case parse yamlToplevelValue config of
+                      Left err => putStrLn $ "error: " ++ err
+                      Right v  => putStrLn $ show v
+  where config = concat file
+
+test : String -> FileIO () ()
+test f = case !(open f Read) of
+                True => do procs !readFile
                            close {- =<< -}
                 False => putStrLn "Error!"
-
-main : IO ()
-main = System.getArgs >>= \args => do
-    run $ compile "Synthia.syn"
 ```
 
 <img align="left" src="http://fc02.deviantart.net/fs70/f/2012/031/3/6/yun_by_thamychan-d4o7bqo.png"/>
