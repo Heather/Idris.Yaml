@@ -24,8 +24,6 @@ test f = case !(open f Read) of
                 False => putStrLn "Error!"
 ```
 
-<img align="left" src="http://fc02.deviantart.net/fs70/f/2012/031/3/6/yun_by_thamychan-d4o7bqo.png"/>
-
 ``` yaml
 name : "Synthia"
 version : 0
