@@ -74,8 +74,8 @@ yamlString = char '"' *> map pack yamlString' <?> "Yaml string"
 -- inspired by Haskell's Data.Scientific module
 record Scientific where
   constructor MkScientific
-  coefficient 	: Integer
-  exponent 		: Integer
+  coefficient   : Integer
+  exponent      : Integer
 
 scientificToFloat : Scientific -> Float
 scientificToFloat (MkScientific c e) = fromInteger c * exp
