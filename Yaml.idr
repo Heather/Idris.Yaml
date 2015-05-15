@@ -60,7 +60,7 @@ specialChar = do
         'r'  => pure '\r'
         't'  => pure '\t'
         'u'  => map chr hexQuad
-        _    => satisfy (const False) <?> "expected special char"
+        _    => fail "expected special char"
 
 yamlString' : Parser (List Char)
 yamlString' = (char '"' *!> pure Prelude.List.Nil) <|> do
@@ -118,11 +118,11 @@ mutual
                       pure (key, val)
 
     yamlObject : Parser (SortedMap String YamlValue)
-    yamlObject = map fromList $ keyValuePair `sepBy` (char '\n')
+    yamlObject = map fromList $ keyValuePair `sepBy` (pure '\n')
 
     -- TODO check id indent is bigger than in array start
     yamlObjectA : Parser (SortedMap String YamlValue)
-    yamlObjectA = map fromList $ keyValuePair `sepBy` (char '\n')
+    yamlObjectA = map fromList $ keyValuePair `sepBy` (pure '\n')
 
     yamlValue' : Parser YamlValue
     yamlValue' =  (map YamlString yamlString)
