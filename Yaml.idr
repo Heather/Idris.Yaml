@@ -118,11 +118,11 @@ mutual
                       pure (key, val)
 
     yamlObject : Parser (SortedMap String YamlValue)
-    yamlObject = map fromList $ keyValuePair `sepBy` (pure '\n')
+    yamlObject = map fromList $ keyValuePair `sepBy` (char '\n') --(pure '\n')
 
     -- TODO check id indent is bigger than in array start
     yamlObjectA : Parser (SortedMap String YamlValue)
-    yamlObjectA = map fromList $ keyValuePair `sepBy` (pure '\n')
+    yamlObjectA = map fromList $ keyValuePair `sepBy` (char '\n') --(pure '\n')
 
     yamlValue' : Parser YamlValue
     yamlValue' =  (map YamlString yamlString)
