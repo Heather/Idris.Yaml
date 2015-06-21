@@ -11,7 +11,7 @@ import public Data.SortedMap
 %access public
 
 data YamlValue = YamlString String
-               | YamlNumber Float
+               | YamlNumber Double
                | YamlBool Bool
                | YamlNull
                | YamlObject (SortedMap String YamlValue)
@@ -77,8 +77,8 @@ record Scientific where
   coefficient   : Integer
   exponent      : Integer
 
-scientificToFloat : Scientific -> Float
-scientificToFloat (MkScientific c e) = fromInteger c * exp
+scientificToDouble : Scientific -> Double
+scientificToDouble (MkScientific c e) = fromInteger c * exp
   where exp = if e < 0 then 1 / pow 10 (fromIntegerNat (- e))
                        else pow 10 (fromIntegerNat e)
 
@@ -94,8 +94,8 @@ parseScientific = do sign <- maybe 1 (const (-1)) `map` opt (char '-')
   where fromDigits : List (Fin 10) -> Integer
         fromDigits = foldl (\a, b => 10 * a + cast b) 0
 
-yamlNumber : Parser Float
-yamlNumber = map scientificToFloat parseScientific
+yamlNumber : Parser Double
+yamlNumber = map scientificToDouble parseScientific
 
 yamlBool : Parser Bool
 yamlBool  =  (char 't' >! string "rue"  *> return True)
@@ -131,7 +131,7 @@ mutual
             <|> (pure YamlNull <* yamlNull)
             <|>| map YamlArray  yamlArray
             <|>| map YamlObject yamlObject
-            
+
     yamlValueA' : Parser YamlValue
     yamlValueA' =  (map YamlString yamlString)
              <|> (map YamlNumber yamlNumber)
