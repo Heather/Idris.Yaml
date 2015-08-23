@@ -7,7 +7,7 @@ import public Effect.StdIO
 import public Effect.File
 
 FileIO : Type -> Type -> Type
-FileIO st t = { [FILE_IO st, STDIO] } Eff t 
+FileIO st t = { [FILE_IO st, STDIO] } Eff t
 
 readFile : FileIO (OpenFile Read) (List String)
 readFile = readAcc [] where
