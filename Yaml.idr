@@ -1,14 +1,14 @@
 module Yaml
 
-import public Lightyear.Core
-import public Lightyear.Combinators
-import public Lightyear.Strings
-
 import public Control.Monad.Identity
+
+import public Lightyear
+import public Lightyear.Char
+import public Lightyear.Strings
 
 import public Data.SortedMap
 
-%access public
+%access public export
 
 data YamlValue = YamlString String
                | YamlNumber Double
