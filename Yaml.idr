@@ -141,7 +141,7 @@ mutual
              <|>| map YamlObject yamlObjectA
 
     yamlArrayValue : Parser YamlValue
-    yamlArrayValue = space *> yamlValueA' <* space
+    yamlArrayValue = spaces *> yamlValueA' <* spaces
 
     yamlValue : Parser YamlValue
     yamlValue = yamlSpace *> yamlValue' <* yamlSpace
