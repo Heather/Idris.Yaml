@@ -5,7 +5,7 @@ Idris.Yaml
 
 ``` idris
 FileIO : Type -> Type -> Type
-FileIO st t = { [FILE_IO st, STDIO] } Eff t 
+FileIO st t = { [FILE_IO st, STDIO] } Eff t
 
 readFile : FileIO (OpenFile Read) (List String)
 readFile = readAcc [] where
