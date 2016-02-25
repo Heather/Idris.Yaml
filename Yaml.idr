@@ -17,7 +17,7 @@ data YamlValue = YamlString String
                | YamlObject (SortedMap String YamlValue)
                | YamlArray (List YamlValue) -- TODO: YamlObject
 
-instance Show YamlValue where
+implementation Show YamlValue where
     show (YamlString s)   = show s
     show (YamlNumber x)   = show x
     show (YamlBool True ) = "true"
