@@ -1,0 +1,17 @@
+notifications:
+  email: false
+  irc: "chat.freenode.net#Heather"
+
+env:
+ - CABALVER=1.22 GHCVER=7.10.1
+ - CABALVER=1.22 GHCVER=7.10.2
+
+before_install:
+ - travis_retry sudo add-apt-repository -y ppa:hvr/ghc
+ - travis_retry sudo apt-get update
+ - travis_retry sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER
+ - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
+
+install: cabal update
+script:
+ - cabal --version
