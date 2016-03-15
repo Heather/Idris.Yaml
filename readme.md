@@ -1,7 +1,7 @@
 Idris.Yaml
 ----------
 
-[![tip for next commit](http://prime4commit.com/projects/290.svg)](http://prime4commit.com/projects/290)
+[![Build Status](https://travis-ci.org/Heather/Idris.Yaml.png?branch=master)](https://travis-ci.org/Heather/Idris.Yaml)
 
 ``` idris
 FileIO : Type -> Type -> Type
