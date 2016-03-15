@@ -105,7 +105,7 @@ yamlNull : Parser ()
 yamlNull = (char 'n' >! string "ull" >! return ()) <?> "Yaml Null"
 
 ||| A parser that skips whitespace without jumping over lines
-yamlSpace : Monad m => ParserT m String ()
+yamlSpace : Monad m => ParserT String m ()
 yamlSpace = skip (many $ satisfy (\c => c /= '\n' && isSpace c)) <?> "yamlSpace"
 
 mutual
