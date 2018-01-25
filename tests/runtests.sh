@@ -12,7 +12,7 @@ clean_up() {
 clean_up
 
 echo "compiling yaml tests..."
-idris Test.idr -p lightyear -p yaml -o test || die "* could not compile tests *"
+idris Test.idr -p lightyear -p yaml -p contrib -o test || die "* could not compile tests *"
 
 echo "compiled OK, running yaml tests..."
 ./test > output || die "* test failed or timed out *"
